@@ -98,6 +98,30 @@ p.lede{color:var(--ink-soft);font-size:.9rem;margin:4px 0 22px;max-width:70ch}
 .qbtn{background:#fff;border:1px solid var(--rule);border-radius:8px;padding:9px 8px;font-size:.7rem;font-weight:600;display:flex;flex-direction:column;gap:4px}
 .qbtn .ic{font-size:.95rem}
 .qbtn.new{border-color:var(--ok);background:#F1FAF4}
+
+.route-actions{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+.cadence-toggle{display:inline-flex;border:1px solid var(--rule);border-radius:20px;overflow:hidden}
+.cadence-toggle button{border:0;background:#fff;padding:7px 14px;font-size:.76rem;font-weight:600;color:var(--ink-soft)}
+.cadence-toggle button.active{background:var(--ink);color:#fff}
+.replay-btn{background:var(--ink);color:#fff;border:0;border-radius:20px;padding:7px 16px;font-size:.78rem;font-weight:600}
+.replay-btn:hover{background:#2a2d2f}
+.timer-line{display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;font-family:"IBM Plex Mono";font-size:.82rem}
+.timer-line .before{color:var(--alert)} .timer-line .after{color:var(--ok)}
+.calc-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px}
+@media(max-width:820px){.calc-grid{grid-template-columns:1fr}}
+.calc-card{background:var(--card);border:1px solid var(--rule);border-radius:10px;padding:16px 18px}
+.calc-card h4{font-size:.9rem;margin-bottom:8px}
+.calc-row{display:flex;justify-content:space-between;font-size:.84rem;padding:6px 0;border-top:1px dashed var(--rule)}
+.calc-row:first-of-type{border-top:0}
+.calc-row .k{color:var(--ink-soft)}
+.calc-row .v{font-family:"IBM Plex Mono";font-weight:600}
+.calc-total{margin-top:8px;padding-top:12px;border-top:2px solid var(--ink);display:flex;justify-content:space-between;align-items:baseline}
+.calc-total .v{font-family:"Archivo";font-weight:900;font-size:1.5rem}
+.input-row{display:flex;flex-wrap:wrap;gap:14px;margin:14px 0}
+.input-field{display:flex;flex-direction:column;gap:4px}
+.input-field label{color:var(--ink-soft);font-family:"IBM Plex Mono";font-size:.66rem;text-transform:uppercase;letter-spacing:.05em}
+.input-field input{width:100px;padding:7px 9px;border:1px solid var(--rule);border-radius:6px;font-family:"IBM Plex Mono";font-size:.86rem;font-weight:600;color:var(--ink)}
+.input-field input:focus-visible{outline:2px solid var(--blue)}
 </style>
 </head>
 <body>
@@ -153,8 +177,81 @@ p.lede{color:var(--ink-soft);font-size:.9rem;margin:4px 0 22px;max-width:70ch}
   </section>
 
   <section>
+    <div class="sec-head"><h2 class="sech">Picking route optimization</h2></div>
+    <p class="lede">FRZ-5522 (ice cream tub) sat in row 6 — the farthest bay from staging — since the day it was put away. It's also one of the fastest-moving SKUs in Zone C. WMS sees the pick frequency and re-slots it to row 1: same rack, same aisle, just closer to the door.</p>
+
+    <div class="route-actions">
+      <span class="mono" style="font-size:.76rem;color:var(--ink-soft)">RE-SLOT TRIGGER</span>
+      <div class="cadence-toggle">
+        <button id="cadDynamic" class="active" onclick="setCadence('dynamic')">Dynamic</button>
+        <button id="cadPeriodic" onclick="setCadence('periodic')">Periodic</button>
+      </div>
+      <span class="mono" id="cadenceNote" style="font-size:.8rem;color:var(--ink-soft)"></span>
+    </div>
+
+    <div class="scene-card" style="margin-top:16px">
+      <div class="scene-head"><h3>SKU FRZ-5522 — 44 picks/day</h3><button class="replay-btn" onclick="runRouteAnim()">▶ Replay walk</button></div>
+      <svg id="sceneRoute" viewBox="0 0 520 300" xmlns="http://www.w3.org/2000/svg"></svg>
+      <div class="timer-line" style="padding:0 18px 16px">
+        <span class="before">● Before — R6 to staging <b id="beforeTimer">0.0s</b></span>
+        <span class="after">● After — R1 to staging <b id="afterTimer">0.0s</b></span>
+      </div>
+    </div>
+
+    <div class="calc-grid">
+      <div class="calc-card">
+        <h4>Per-walk distance</h4>
+        <div class="calc-row"><span class="k">Row spacing (aisle pitch)</span><span class="v">3.0 m</span></div>
+        <div class="calc-row"><span class="k">Before — row 6 to staging</span><span class="v">18.0 m</span></div>
+        <div class="calc-row"><span class="k">After — row 1 to staging</span><span class="v">3.0 m</span></div>
+        <div class="calc-row"><span class="k">Walking speed</span><span class="v">1.2 m/s</span></div>
+        <div class="calc-total"><span class="k">Saved per walk</span><span class="v">12.5s</span></div>
+      </div>
+      <div class="calc-card">
+        <h4>Daily / monthly impact</h4>
+        <div class="calc-row"><span class="k">Picks per day, this SKU</span><span class="v">44</span></div>
+        <div class="calc-row"><span class="k">Saved per day</span><span class="v">9.2 min</span></div>
+        <div class="calc-row"><span class="k">Working days / month</span><span class="v">22</span></div>
+        <div class="calc-row"><span class="k">Walking time cut</span><span class="v">83%</span></div>
+        <div class="calc-total"><span class="k">Saved per month, this SKU</span><span class="v" style="color:var(--ok)">3.4 hrs</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="sec-head"><h2 class="sech">Portfolio-wide — what this is worth across all A/B SKUs</h2></div>
+    <p class="lede">One SKU is a demo. A typical retail DC runs 7,000–8,000 SKUs, roughly 20% (~2,000) A/B-class — the movers worth re-slotting. Seasonal demand shifts which of those are "hot" month to month, so 3–5% of that 2,000 get re-slotted in an average month. Adjust the assumptions below.</p>
+
+    <div class="input-row">
+      <div class="input-field"><label>A/B-class SKUs</label><input type="number" id="inAB" value="2000" min="0" oninput="calcPortfolio()"></div>
+      <div class="input-field"><label>Switch % — low</label><input type="number" id="inSwLow" value="3" min="0" max="100" step="0.5" oninput="calcPortfolio()"></div>
+      <div class="input-field"><label>Switch % — high</label><input type="number" id="inSwHigh" value="5" min="0" max="100" step="0.5" oninput="calcPortfolio()"></div>
+      <div class="input-field"><label>Avg picks/day per SKU</label><input type="number" id="inPicks" value="15" min="0" oninput="calcPortfolio()"></div>
+      <div class="input-field"><label>Daily wage (THB)</label><input type="number" id="inWage" value="450" min="0" oninput="calcPortfolio()"></div>
+    </div>
+
+    <div class="calc-grid">
+      <div class="calc-card">
+        <h4>SKUs re-slotted / month</h4>
+        <div class="calc-row"><span class="k">Low estimate</span><span class="v" id="outSkuLow">60</span></div>
+        <div class="calc-row"><span class="k">High estimate</span><span class="v" id="outSkuHigh">100</span></div>
+        <div class="calc-row"><span class="k">Saved per re-slotted SKU / month</span><span class="v" id="outPerSku">1.15 hr</span></div>
+        <div class="calc-total"><span class="k">Walking hours saved / month</span><span class="v" id="outHours" style="color:var(--ok)">69–115 hr</span></div>
+      </div>
+      <div class="calc-card">
+        <h4>Labor &amp; SLA equivalent</h4>
+        <div class="calc-row"><span class="k">Wage rate (8h shift)</span><span class="v" id="outRate">56.3 THB/hr</span></div>
+        <div class="calc-row"><span class="k">Labor-cost equivalent / month</span><span class="v" id="outThbMonth">฿3,870–6,450</span></div>
+        <div class="calc-row"><span class="k">Labor-cost equivalent / year</span><span class="v" id="outThbYear">฿46.4K–77.3K</span></div>
+        <div class="calc-total"><span class="k">Picker-shifts freed / month</span><span class="v" id="outShifts" style="color:var(--ok)">8.6–14.3</span></div>
+      </div>
+    </div>
+    <p class="lede" style="margin-top:14px">That's not headcount cut — it's capacity: 9–14 picker-shifts a month freed from walking, redeployable to the order lines that are actually late during the exact seasonal peaks that caused the re-slotting in the first place. That's the SLA lever, not just the wage line.</p>
+  </section>
+
+  <section>
     <div class="sec-head"><h2 class="sech">Count methods — matched to level</h2></div>
-    <p class="lede">Once it's racked, "count the pallet" means something different at L1 than at L5. Three methods, three reach profiles, used together — and for L3-L5, both faster and safer than the old way: a person in a safety cage riding the forklift up to count by eye.</p>
+    <p class="lede">Once it's racked, "count the pallet" means something different at L1 than at L5. Three methods, three reach profiles, used together — and for L3-L5, both faster and safer than the old way: a person in a safety cage riding the forklift up to count by eye. Count is a module of WMS, not a separate product — <a href="floorstack-count.html" target="_blank" rel="noopener" style="color:var(--blue);font-weight:600">open the full count control center →</a></p>
     <div class="scenes3">
       <div class="scene-card">
         <div class="scene-head"><h3>Human + phone</h3><span class="scene-tag method-tag">L1–L2</span></div>
@@ -191,6 +288,36 @@ p.lede{color:var(--ink-soft);font-size:.9rem;margin:4px 0 22px;max-width:70ch}
   </section>
 
   <section>
+    <div class="sec-head"><h2 class="sech">The real count saving isn't walking — it's the cage</h2></div>
+    <p class="lede">Below L3, count time is the story. Above it, staffing is: a caged cycle count needs the forklift operator plus a spotter riding the cage, both tied up for every high-bay session, every cycle. Automate the camera and that labor is gone, not just faster.</p>
+
+    <div class="input-row">
+      <div class="input-field"><label>Caged-count hrs/day — low</label><input type="number" id="inCageLow" value="4" min="0" step="0.5" oninput="calcCage()"></div>
+      <div class="input-field"><label>Caged-count hrs/day — high</label><input type="number" id="inCageHigh" value="8" min="0" step="0.5" oninput="calcCage()"></div>
+      <div class="input-field"><label>People per cage session</label><input type="number" id="inCagePeople" value="2" min="1" step="1" oninput="calcCage()"></div>
+      <div class="input-field"><label>Daily wage (THB)</label><input type="number" id="inCageWage" value="450" min="0" oninput="calcCage()"></div>
+    </div>
+
+    <div class="calc-grid">
+      <div class="calc-card">
+        <h4>Headcount eliminated</h4>
+        <div class="calc-row"><span class="k">Person-hours/day on caged counts</span><span class="v" id="outCagePersonHr">8–16 hr</span></div>
+        <div class="calc-row"><span class="k">Person-hours/month</span><span class="v" id="outCagePersonMonth">176–352 hr</span></div>
+        <div class="calc-row"><span class="k">FTE-hours/month (1 FTE)</span><span class="v">176 hr</span></div>
+        <div class="calc-total"><span class="k">FTE eliminated</span><span class="v" id="outCageFte" style="color:var(--ok)">1.0–2.0</span></div>
+      </div>
+      <div class="calc-card">
+        <h4>Payroll &amp; safety equivalent</h4>
+        <div class="calc-row"><span class="k">Payroll equivalent / month</span><span class="v" id="outCageThbMonth">฿9,900–19,800</span></div>
+        <div class="calc-row"><span class="k">Payroll equivalent / year</span><span class="v" id="outCageThbYear">฿118.8K–237.6K</span></div>
+        <div class="calc-row"><span class="k">People no longer riding a cage at height</span><span class="v" id="outCagePeopleOut">1–2</span></div>
+        <div class="calc-total"><span class="k">Height-work incidents this can't cause</span><span class="v" style="color:var(--ok)">0</span></div>
+      </div>
+    </div>
+    <p class="lede" style="margin-top:14px">This is the number that dwarfs the picking-route savings above — because it's not shaving seconds off a walk, it's removing a standing 1–2 person assignment from the schedule entirely, along with the fall-from-height exposure that comes with it.</p>
+  </section>
+
+  <section>
     <div class="sec-head"><h2 class="sech">Switch Scan — how a pallet gets there</h2></div>
     <p class="lede">The app the receiving clerk and the forklift driver actually use. Tap through each screen below.</p>
     <div class="phones">
@@ -214,6 +341,34 @@ p.lede{color:var(--ink-soft);font-size:.9rem;margin:4px 0 22px;max-width:70ch}
         <div class="phone"><div class="phone-screen" id="askPhone"></div></div>
       </div>
     </div>
+  </section>
+
+  <section>
+    <div class="sec-head"><h2 class="sech">What "just ask" replaces</h2></div>
+    <p class="lede">Every one of those saved commands used to be a ticket: describe the report to an outside developer, wait for a quote, wait for a build slot, pay for it, then pay again the next time the filter needs to change. Plain-language query removes that loop entirely — and it's not just cheaper, it's who gets to ask.</p>
+
+    <div class="input-row">
+      <div class="input-field"><label>Custom report requests/yr avoided</label><input type="number" id="inReports" value="24" min="0" oninput="calcAskValue()"></div>
+      <div class="input-field"><label>Outside dev cost/report — low</label><input type="number" id="inDevLow" value="10000" min="0" step="1000" oninput="calcAskValue()"></div>
+      <div class="input-field"><label>Outside dev cost/report — high</label><input type="number" id="inDevHigh" value="25000" min="0" step="1000" oninput="calcAskValue()"></div>
+    </div>
+
+    <div class="calc-grid">
+      <div class="calc-card">
+        <h4>Outside developer spend avoided</h4>
+        <div class="calc-row"><span class="k">Requests/year that used to need a dev</span><span class="v" id="outReports">24</span></div>
+        <div class="calc-row"><span class="k">Cost per report, typical range</span><span class="v" id="outDevRange">฿10,000–25,000</span></div>
+        <div class="calc-total"><span class="k">Avoided spend / year</span><span class="v" id="outAskThbYear" style="color:var(--ok)">฿240K–600K</span></div>
+      </div>
+      <div class="calc-card">
+        <h4>Who can ask a question</h4>
+        <div class="calc-row"><span class="k">Before — could write a report spec</span><span class="v">1 role (IT / outside dev)</span></div>
+        <div class="calc-row"><span class="k">After — could type a question</span><span class="v">Whole floor team</span></div>
+        <div class="calc-row"><span class="k">Turnaround, before</span><span class="v">Days–weeks, per request</span></div>
+        <div class="calc-total"><span class="k">Turnaround, after</span><span class="v" style="color:var(--ok)">Seconds</span></div>
+      </div>
+    </div>
+    <p class="lede" style="margin-top:14px">The bigger number isn't the avoided invoice — it's that a warehouse supervisor who could never justify a dev ticket for "what's overdue right now" just asks it, and starts asking the next question, and the one after that, without anyone approving a budget line first.</p>
   </section>
 </div>
 
@@ -403,6 +558,149 @@ function buildRack(svg, highlight){
   el('rect', {x:dx-8, y:dy-5, width:16, height:10, rx:3, fill:'#2F6FB0'}, svg);
   el('circle', {cx:dx, cy:dy+7, r:3, fill:'#2F8F86'}, svg);
 })();
+
+/* ---------- picking route optimization scene ---------- */
+const routeState = {};
+(function(){
+  const svg = document.getElementById('sceneRoute');
+  el('rect', {x:0,y:0,width:520,height:300,fill:'#FAF8F1'}, svg);
+
+  const baseY = 255; // top edge of staging band = bottom of aisle
+  el('rect', {x:0,y:baseY,width:520,height:45,fill:'#E4EAF3'}, svg);
+  const st = el('text', {x:260,y:baseY+28,"text-anchor":'middle',"font-family":'IBM Plex Mono',"font-size":'11',"font-weight":'700',fill:'#2F6FB0'}, svg);
+  st.textContent = 'STAGING / DOCK';
+
+  const rows=6, rowH=33, cellH=27, gap=rowH-cellH, aisleX=220, aisleW=80;
+  const rowTopY = r => baseY - r*rowH + gap/2;
+  const rowCenterY = r => rowTopY(r) + cellH/2;
+
+  for(let r=1; r<=rows; r++){
+    const isFirst = r===1, isLast = r===rows;
+    const fill = isFirst?'#DDEFE5':isLast?'#F7E4E1':'#FFFFFF';
+    const stroke = isFirst?'#1F5C3E':isLast?'#B23A2E':'#DAD6C8';
+    el('rect', {x:aisleX,y:rowTopY(r),width:aisleW,height:cellH,fill,stroke,"stroke-width":1.4}, svg);
+    const lbl = el('text', {x:aisleX-10,y:rowCenterY(r)+4,"text-anchor":'end',"font-family":'IBM Plex Mono',"font-size":'10',"font-weight":'700',fill:isFirst?'#1F5C3E':isLast?'#B23A2E':'#B7B2A2'}, svg);
+    lbl.textContent = 'R'+r;
+    const dl = el('text', {x:aisleX+aisleW+10,y:rowCenterY(r)+4,"font-family":'IBM Plex Mono',"font-size":'9',fill:'#6E7166'}, svg);
+    dl.textContent = (r*3)+'m';
+    if(isFirst||isLast){
+      const tag = el('text', {x:aisleX+aisleW/2,y:rowCenterY(r)+3,"text-anchor":'middle',"font-family":'IBM Plex Mono',"font-size":'8',"font-weight":'700',fill:isFirst?'#1F5C3E':'#B23A2E'}, svg);
+      tag.textContent = isFirst?'NEW':'OLD';
+    }
+  }
+
+  const stagingY = baseY+18, beforeX=248, afterX=272;
+  const beforeTargetY = rowCenterY(6), afterTargetY = rowCenterY(1);
+
+  el('line', {x1:beforeX,y1:stagingY,x2:beforeX,y2:beforeTargetY,stroke:'#B23A2E',"stroke-width":1.3,"stroke-dasharray":'3 3',opacity:.5}, svg);
+  el('line', {x1:afterX,y1:stagingY,x2:afterX,y2:afterTargetY,stroke:'#1F5C3E',"stroke-width":1.3,"stroke-dasharray":'3 3',opacity:.5}, svg);
+
+  el('circle', {id:'walkerBefore',cx:beforeX,cy:stagingY,r:6,fill:'#B23A2E'}, svg);
+  el('circle', {id:'walkerAfter',cx:afterX,cy:stagingY,r:6,fill:'#1F5C3E'}, svg);
+
+  Object.assign(routeState, {stagingY, beforeX, beforeTargetY, afterX, afterTargetY});
+})();
+
+function animateWalker(circleId, fromY, toY, durationMs, timerId, realTime){
+  const start = performance.now();
+  const circle = document.getElementById(circleId);
+  const timerEl = document.getElementById(timerId);
+  function frame(now){
+    let t = (now-start)/durationMs; if(t>1) t=1;
+    circle.setAttribute('cy', fromY+(toY-fromY)*t);
+    timerEl.textContent = (t*realTime).toFixed(1)+'s';
+    if(t<1) requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+}
+
+function runRouteAnim(){
+  document.getElementById('walkerBefore').setAttribute('cy', routeState.stagingY);
+  document.getElementById('walkerAfter').setAttribute('cy', routeState.stagingY);
+  document.getElementById('beforeTimer').textContent = '0.0s';
+  document.getElementById('afterTimer').textContent = '0.0s';
+  animateWalker('walkerBefore', routeState.stagingY, routeState.beforeTargetY, 3000, 'beforeTimer', 15);
+  animateWalker('walkerAfter', routeState.stagingY, routeState.afterTargetY, 500, 'afterTimer', 2.5);
+}
+
+function setCadence(mode){
+  document.getElementById('cadDynamic').classList.toggle('active', mode==='dynamic');
+  document.getElementById('cadPeriodic').classList.toggle('active', mode==='periodic');
+  document.getElementById('cadenceNote').textContent = mode==='dynamic'
+    ? "Triggered the moment pick frequency crosses threshold — moves same shift."
+    : "Re-slotted nightly at 02:00 from the prior day's picks — moves land next shift.";
+}
+setCadence('dynamic');
+runRouteAnim();
+
+/* ---------- portfolio-wide savings calculator ---------- */
+const SEC_SAVED_PER_WALK = 12.5; // from the row6->row1 scene above
+const WORK_DAYS_PER_MONTH = 22;
+const HOURS_PER_SHIFT = 8;
+
+function calcPortfolio(){
+  const ab = +document.getElementById('inAB').value || 0;
+  const swLow = +document.getElementById('inSwLow').value || 0;
+  const swHigh = +document.getElementById('inSwHigh').value || 0;
+  const picks = +document.getElementById('inPicks').value || 0;
+  const wage = +document.getElementById('inWage').value || 0;
+
+  const hrPerSkuPerMonth = (picks * SEC_SAVED_PER_WALK / 3600) * WORK_DAYS_PER_MONTH;
+  const skuLow = ab * swLow/100, skuHigh = ab * swHigh/100;
+  const hoursLow = skuLow * hrPerSkuPerMonth, hoursHigh = skuHigh * hrPerSkuPerMonth;
+  const rate = wage / HOURS_PER_SHIFT;
+  const thbLow = hoursLow*rate, thbHigh = hoursHigh*rate;
+  const shiftsLow = hoursLow/HOURS_PER_SHIFT, shiftsHigh = hoursHigh/HOURS_PER_SHIFT;
+
+  const fmt = n => n.toLocaleString(undefined, {maximumFractionDigits:0});
+  document.getElementById('outSkuLow').textContent = fmt(skuLow);
+  document.getElementById('outSkuHigh').textContent = fmt(skuHigh);
+  document.getElementById('outPerSku').textContent = hrPerSkuPerMonth.toFixed(2)+' hr';
+  document.getElementById('outHours').textContent = fmt(hoursLow)+'–'+fmt(hoursHigh)+' hr';
+  document.getElementById('outRate').textContent = rate.toFixed(1)+' THB/hr';
+  document.getElementById('outThbMonth').textContent = '฿'+fmt(thbLow)+'–'+fmt(thbHigh);
+  document.getElementById('outThbYear').textContent = '฿'+(thbLow*12/1000).toFixed(1)+'K–'+(thbHigh*12/1000).toFixed(1)+'K';
+  document.getElementById('outShifts').textContent = shiftsLow.toFixed(1)+'–'+shiftsHigh.toFixed(1);
+}
+calcPortfolio();
+
+/* ---------- caged-count FTE calculator ---------- */
+function calcCage(){
+  const hrLow = +document.getElementById('inCageLow').value || 0;
+  const hrHigh = +document.getElementById('inCageHigh').value || 0;
+  const people = +document.getElementById('inCagePeople').value || 0;
+  const wage = +document.getElementById('inCageWage').value || 0;
+
+  const personHrLow = hrLow*people, personHrHigh = hrHigh*people;
+  const monthHrLow = personHrLow*WORK_DAYS_PER_MONTH, monthHrHigh = personHrHigh*WORK_DAYS_PER_MONTH;
+  const fteLow = monthHrLow/(HOURS_PER_SHIFT*WORK_DAYS_PER_MONTH), fteHigh = monthHrHigh/(HOURS_PER_SHIFT*WORK_DAYS_PER_MONTH);
+  const thbMonthLow = fteLow*wage*WORK_DAYS_PER_MONTH, thbMonthHigh = fteHigh*wage*WORK_DAYS_PER_MONTH;
+
+  const fmt = n => n.toLocaleString(undefined, {maximumFractionDigits:0});
+  document.getElementById('outCagePersonHr').textContent = fmt(personHrLow)+'–'+fmt(personHrHigh)+' hr';
+  document.getElementById('outCagePersonMonth').textContent = fmt(monthHrLow)+'–'+fmt(monthHrHigh)+' hr';
+  document.getElementById('outCageFte').textContent = fteLow.toFixed(1)+'–'+fteHigh.toFixed(1);
+  document.getElementById('outCageThbMonth').textContent = '฿'+fmt(thbMonthLow)+'–'+fmt(thbMonthHigh);
+  document.getElementById('outCageThbYear').textContent = '฿'+(thbMonthLow*12/1000).toFixed(1)+'K–'+(thbMonthHigh*12/1000).toFixed(1)+'K';
+  document.getElementById('outCagePeopleOut').textContent = '1–'+people;
+}
+calcCage();
+
+/* ---------- ask-in-plain-language value calculator ---------- */
+function calcAskValue(){
+  const reports = +document.getElementById('inReports').value || 0;
+  const devLow = +document.getElementById('inDevLow').value || 0;
+  const devHigh = +document.getElementById('inDevHigh').value || 0;
+
+  const yearLow = reports*devLow, yearHigh = reports*devHigh;
+  const fmt = n => n.toLocaleString(undefined, {maximumFractionDigits:0});
+  const fmtK = n => (n/1000).toFixed(0)+'K';
+
+  document.getElementById('outReports').textContent = fmt(reports);
+  document.getElementById('outDevRange').textContent = '฿'+fmt(devLow)+'–'+fmt(devHigh);
+  document.getElementById('outAskThbYear').textContent = '฿'+fmtK(yearLow)+'–'+fmtK(yearHigh);
+}
+calcAskValue();
 
 /* ---------- phone: goods receive ---------- */
 const camIcon = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 8h3l1.5-2h7L17 8h3a1 1 0 011 1v9a1 1 0 01-1 1H4a1 1 0 01-1-1V9a1 1 0 011-1z"/><circle cx="12" cy="13" r="3.4"/></svg>`;

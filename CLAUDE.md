@@ -14,7 +14,8 @@ directly in a browser or serve as static assets.
 |---|---|
 | `index.html` | Homepage — Chawin Intawong personal/consulting site (supply chain & logistics executive bio). Also the ChawinConsulting identity; FloorStack was merged into it as one brand rather than kept separate. |
 | `floorstack.html` | FloorStack build log — live status/journal for the FloorStack product suite. |
-| `floorstack-count.html` | FloorStack Count — product demo (floor-stack counting UI). |
+| `floorstack-wms.html` | FloorStack WMS — product demo. Before/after warehouse (floor-stack vs 5-level racking), count-method scenes, Switch Scan goods receive/putaway app mockup, plain-language ask/quick-command mockup. Links out to the count module. |
+| `floorstack-count.html` | FloorStack WMS · Count module demo (zone-level count control center) — not a separate product, linked from `floorstack-wms.html`. |
 | `floorstack-procure.html` | FloorStack Procure — product demo (floor-stack procurement UI, bilingual EN/TH). |
 | `chawinconsulting-site/` | **Separate nested git repo** (own `.git`), untracked by this repo. Zero-dependency Node static server + Railway deploy config for a standalone version of the portfolio site. Not yet pushed to GitHub or linked to Railway — see its own `README.md`. |
 
