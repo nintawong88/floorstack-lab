@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FloorStack WMS — Before &amp; After Demo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;700;800;900&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#F0EEE3; --card:#FFFFFF; --ink:#15171A; --ink-soft:#6E7166; --rule:#DAD6C8;
+  --ok:#1F5C3E; --alert:#B23A2E; --warn:#B0631E; --blue:#2F6FB0; --teal:#2F8F86;
+  --wood:#B98A55; --box:#D9A76A;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:"IBM Plex Sans",system-ui,sans-serif;line-height:1.6}
+h1,h2,h3{font-family:"Archivo",sans-serif;font-weight:800;letter-spacing:-.01em;margin:0}
+.mono{font-family:"IBM Plex Mono",monospace}
+:focus-visible{outline:3px solid var(--ink);outline-offset:2px}
+button{font:inherit;cursor:pointer}
+
+.demobar{background:var(--ink);color:#fff;font-family:"IBM Plex Mono";font-size:.78rem;text-align:center;padding:7px}
+.demobar a{color:#fff}
+
+.topbar{background:var(--card);border-bottom:1px solid var(--rule)}
+.tickerwrap{max-width:1180px;margin:0 auto;padding:12px 24px;display:flex;align-items:center;gap:22px;flex-wrap:wrap}
+.brand{display:flex;align-items:center;gap:10px;font-family:"Archivo";font-weight:800;font-size:1.15rem;margin-right:auto}
+.brand .ic{width:26px;height:26px;border-radius:6px;background:var(--teal);flex:0 0 auto;display:flex;align-items:center;justify-content:center;color:#fff;font-size:.7rem;font-weight:800}
+.ticker{display:flex;gap:16px;flex-wrap:wrap;font-size:.82rem;color:var(--ink-soft)}
+.ticker b{color:var(--ink);font-weight:600}
+.ticker .dot{opacity:.4}
+
+.wrap{max-width:1180px;margin:0 auto;padding:0 24px}
+.hero{padding:36px 0 8px}
+.hero-top{display:flex;justify-content:space-between;align-items:flex-end;gap:20px;flex-wrap:wrap}
+h1.title{font-size:clamp(1.7rem,4vw,2.5rem)}
+.subtitle{font-family:"IBM Plex Mono";font-size:.76rem;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-soft);margin-top:6px}
+.asof{text-align:right;font-size:.82rem;color:var(--ink-soft)}
+.asof b{display:block;font-size:.95rem;color:var(--ink);font-family:"IBM Plex Mono"}
+.rule-thick{height:3px;background:var(--ink);margin:18px 0}
+
+section{padding:30px 0}
+.sec-head{margin-bottom:6px}
+h2.sech{font-size:1.3rem}
+p.lede{color:var(--ink-soft);font-size:.9rem;margin:4px 0 22px;max-width:70ch}
+
+/* ---- before/after scenes ---- */
+.scenes{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+@media(max-width:820px){.scenes{grid-template-columns:1fr}}
+.scene-card{background:var(--card);border:1px solid var(--rule);border-radius:10px;overflow:hidden}
+.scene-head{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border-bottom:1px solid var(--rule)}
+.scene-head h3{font-size:1.02rem}
+.scene-tag{font-family:"IBM Plex Mono";font-size:.68rem;letter-spacing:.08em;text-transform:uppercase;padding:3px 9px;border-radius:20px;font-weight:600}
+.scene-tag.before{background:#F7E4E1;color:var(--alert)}
+.scene-tag.after{background:#DDEFE5;color:var(--ok)}
+.scene-card svg{display:block;width:100%;height:auto;background:#FAF8F1}
+.checklist{list-style:none;padding:14px 18px 18px;margin:0;font-size:.86rem}
+.checklist li{display:flex;gap:8px;padding:5px 0;color:var(--ink-soft)}
+.checklist li b{color:var(--ink);font-weight:600}
+.checklist .x{color:var(--alert);font-weight:800}
+.checklist .ok{color:var(--ok);font-weight:800}
+
+/* ---- phone mockups ---- */
+.phones{display:flex;gap:36px;flex-wrap:wrap;justify-content:center;padding-top:6px}
+.phone-block{display:flex;flex-direction:column;align-items:center;gap:12px}
+.phone-label{font-family:"IBM Plex Mono";font-size:.72rem;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-soft)}
+.phone{width:250px;border:10px solid var(--ink);border-radius:34px;background:#fff;box-shadow:0 16px 32px rgba(21,23,26,.16);overflow:hidden}
+.phone-screen{aspect-ratio:9/18;display:flex;flex-direction:column}
+.phone-topbar{background:var(--ink);color:#fff;font-family:"IBM Plex Mono";font-size:.66rem;padding:9px 14px;display:flex;justify-content:space-between;flex:0 0 auto}
+.phone-body{flex:1;padding:18px;display:flex;flex-direction:column;gap:14px}
+.viewfinder{flex:1;border:2px dashed var(--rule);border-radius:12px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;color:var(--ink-soft);background:#F6F4EC}
+.viewfinder svg{width:44px;height:44px}
+.thumb{border-radius:8px;overflow:hidden;border:1px solid var(--rule)}
+.thumb svg{width:100%;display:block;background:#EDEAE0}
+.field{font-size:.82rem}
+.field .l{color:var(--ink-soft);font-size:.7rem;text-transform:uppercase;letter-spacing:.06em;font-family:"IBM Plex Mono"}
+.field .v{font-weight:700}
+.phonebtn{background:var(--ink);color:#fff;border:0;border-radius:8px;padding:11px 14px;font-size:.84rem;font-weight:600;width:100%}
+.phonebtn:hover{background:#2a2d2f}
+.phonebtn[disabled]{background:var(--rule);color:var(--ink-soft)}
+.success{display:flex;align-items:flex-start;gap:8px;background:#DDEFE5;color:var(--ok);border-radius:8px;padding:12px;font-size:.82rem;font-weight:600}
+.locbox{background:#FFF7E8;border:1px solid #EAD6A6;border-radius:8px;padding:12px;display:flex;flex-direction:column;gap:4px}
+.locbox .loc{font-family:"IBM Plex Mono";font-size:1.3rem;font-weight:700}
+.barcode-mini{display:flex;gap:1.5px;align-items:flex-end;height:20px}
+.barcode-mini div{background:var(--ink);width:2px}
+</style>
+</head>
+<body>
+
+<div class="demobar">DEMO — sample data only, not connected to a live warehouse · <a href="floorstack.html">← back to FloorStack</a></div>
+
+<div class="topbar"><div class="tickerwrap">
+  <div class="brand"><span class="ic">FW</span>FloorStack WMS</div>
+  <div class="ticker">
+    <span><b>412</b> pallets relocated this go-live</span><span class="dot">·</span>
+    <span>Putaway accuracy <b>99.4%</b></span><span class="dot">·</span>
+    <span><b>0</b> lost pallets since cutover</span>
+  </div>
+</div></div>
+
+<div class="wrap">
+  <div class="hero">
+    <div class="hero-top">
+      <div>
+        <h1 class="title">Before &amp; after — floor stack to rack-and-locate</h1>
+        <div class="subtitle">Switch Scan: goods receive &amp; putaway</div>
+      </div>
+      <div class="asof">Site<b>Zone C conversion</b></div>
+    </div>
+    <div class="rule-thick"></div>
+  </div>
+
+  <section>
+    <div class="sec-head"><h2 class="sech">The warehouse</h2></div>
+    <p class="lede">Same stock, same building. Left is a typical unmanaged floor-stack area — pallets dropped where there's space. Right is the same area after FloorStack WMS: 5-level racking, every pallet ID'd, barcoded and location-coded.</p>
+    <div class="scenes">
+      <div class="scene-card">
+        <div class="scene-head"><h3>Before</h3><span class="scene-tag before">Floor stack</span></div>
+        <svg id="sceneBefore" viewBox="0 0 520 300" xmlns="http://www.w3.org/2000/svg"></svg>
+        <ul class="checklist">
+          <li><span class="x">✕</span> <span>1 pallet high, floor only — no vertical storage</span></li>
+          <li><span class="x">✕</span> <span>No pallet ID — can't tell one unit from another</span></li>
+          <li><span class="x">✕</span> <span>No barcode — every count and pick is manual and visual</span></li>
+          <li><span class="x">✕</span> <span>Location = "somewhere in Zone C"</span></li>
+        </ul>
+      </div>
+      <div class="scene-card">
+        <div class="scene-head"><h3>After</h3><span class="scene-tag after">5-level racking</span></div>
+        <svg id="sceneAfter" viewBox="0 0 520 300" xmlns="http://www.w3.org/2000/svg"></svg>
+        <ul class="checklist">
+          <li><span class="ok">✓</span> <span>5 levels, 4 bays — same footprint, <b>5x</b> the storage</span></li>
+          <li><span class="ok">✓</span> <span>Pallet ID on every unit, assigned at goods receive</span></li>
+          <li><span class="ok">✓</span> <span>Barcode scanned at putaway, count and pick</span></li>
+          <li><span class="ok">✓</span> <span>Location = <b>C-03-L4-02</b> (aisle-bay-level-slot)</span></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="sec-head"><h2 class="sech">Switch Scan — how a pallet gets there</h2></div>
+    <p class="lede">The app the receiving clerk and the forklift driver actually use. Tap through each screen below.</p>
+    <div class="phones">
+      <div class="phone-block">
+        <div class="phone-label">1 · Goods receive</div>
+        <div class="phone"><div class="phone-screen" id="receivePhone"></div></div>
+      </div>
+      <div class="phone-block">
+        <div class="phone-label">2 · Putaway</div>
+        <div class="phone"><div class="phone-screen" id="putawayPhone"></div></div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<script>
+const svgNS = "http://www.w3.org/2000/svg";
+function el(tag, attrs, parent){
+  const n = document.createElementNS(svgNS, tag);
+  for(const k in attrs) n.setAttribute(k, attrs[k]);
+  if(parent) parent.appendChild(n);
+  return n;
+}
+
+/* ---------- BEFORE: messy floor stack ---------- */
+(function(){
+  const svg = document.getElementById('sceneBefore');
+  el('rect', {x:0,y:0,width:520,height:300,fill:'#FAF8F1'}, svg);
+  el('rect', {x:0,y:250,width:520,height:50,fill:'#EDE9DC'}, svg);
+  el('line', {x1:0,y1:250,x2:520,y2:250,stroke:'#DAD6C8',"stroke-width":2}, svg);
+
+  const piles = [
+    {x:40,  y:200, w:70, h:48, r:-6, c:'#D9A76A'},
+    {x:120, y:215, w:60, h:40, r:4,  c:'#CBB183'},
+    {x:190, y:195, w:75, h:52, r:-3, c:'#D9A76A'},
+    {x:280, y:210, w:65, h:42, r:7,  c:'#C79B63'},
+    {x:355, y:198, w:70, h:50, r:-8, c:'#D9A76A'},
+    {x:60,  y:150, w:55, h:36, r:5,  c:'#CBB183'},
+    {x:430, y:212, w:60, h:40, r:2,  c:'#D9A76A'},
+    {x:210, y:150, w:50, h:34, r:-4, c:'#C79B63'},
+    {x:320, y:155, w:56, h:36, r:6,  c:'#CBB183'},
+  ];
+  piles.forEach(p=>{
+    const g = el('g', {transform:`rotate(${p.r} ${p.x+p.w/2} ${p.y+p.h})`}, svg);
+    el('ellipse', {cx:p.x+p.w/2, cy:p.y+p.h+6, rx:p.w/1.7, ry:6, fill:'rgba(0,0,0,.08)'}, g);
+    el('rect', {x:p.x, y:p.y+p.h-10, width:p.w, height:10, fill:'#B98A55', rx:1}, g);
+    el('rect', {x:p.x+4, y:p.y, width:p.w-8, height:p.h-12, fill:p.c, rx:2, stroke:'#00000022'}, g);
+  });
+
+  const flag = el('g', {}, svg);
+  el('rect', {x:150,y:60,width:150,height:34,rx:6,fill:'#F7E4E1',stroke:'#B23A2E',"stroke-dasharray":'4 3'}, flag);
+  const t1 = el('text', {x:225,y:81,"text-anchor":'middle',"font-family":'IBM Plex Mono',"font-size":'12',"font-weight":'600',fill:'#B23A2E'}, flag);
+  t1.textContent = 'NO ID · NO BARCODE';
+
+  const flag2 = el('g', {}, svg);
+  el('rect', {x:355,y:70,width:130,height:30,rx:6,fill:'#F7E4E1',stroke:'#B23A2E',"stroke-dasharray":'4 3'}, flag2);
+  const t2 = el('text', {x:420,y:90,"text-anchor":'middle',"font-family":'IBM Plex Mono',"font-size":'11',"font-weight":'600',fill:'#B23A2E'}, flag2);
+  t2.textContent = '1 LEVEL ONLY';
+})();
+
+/* ---------- AFTER: 5-level racking ---------- */
+(function(){
+  const svg = document.getElementById('sceneAfter');
+  el('rect', {x:0,y:0,width:520,height:300,fill:'#FAF8F1'}, svg);
+  el('rect', {x:0,y:270,width:520,height:30,fill:'#EDE9DC'}, svg);
+
+  const bays = 4, levels = 5;
+  const startX = 46, bayW = 100, gap = 8;
+  const floorY = 270, levelH = 42;
+
+  for(let b=0; b<bays; b++){
+    const x = startX + b*(bayW+gap);
+    el('rect', {x:x-4, y:floorY-levels*levelH, width:5, height:levels*levelH, fill:'#9AA0A6'}, svg);
+    el('rect', {x:x+bayW-1, y:floorY-levels*levelH, width:5, height:levels*levelH, fill:'#9AA0A6'}, svg);
+    const bt = el('text', {x:x+bayW/2, y:floorY-levels*levelH-8, "text-anchor":'middle', "font-family":'IBM Plex Mono', "font-size":'11', "font-weight":'600', fill:'#6E7166'}, svg);
+    bt.textContent = 'BAY C-0'+(b+1);
+  }
+
+  let pid = 4821;
+  for(let lvl=0; lvl<levels; lvl++){
+    const y = floorY - (lvl+1)*levelH;
+    el('rect', {x:38, y:y+levelH-4, width:startX+bays*(bayW+gap)-gap-38, height:4, fill:'#6E7166'}, svg);
+    const lt = el('text', {x:20, y:y+levelH/2+4, "text-anchor":'middle', "font-family":'IBM Plex Mono', "font-size":'11', "font-weight":'700', fill:'#15171A'}, svg);
+    lt.textContent = 'L'+(levels-lvl);
+
+    for(let b=0; b<bays; b++){
+      if(lvl===2 && b===1) continue; // one open slot, keeps it honest
+      const x = startX + b*(bayW+gap);
+      const cell = el('g', {}, svg);
+      el('rect', {x:x+2, y:y+levelH-12, width:bayW-8, height:8, fill:'#B98A55'}, cell);
+      el('rect', {x:x+6, y:y+6, width:bayW-16, height:levelH-20, fill:'#DDEFE5', stroke:'#1F5C3E', "stroke-width":1, rx:2}, cell);
+      const idt = el('text', {x:x+10, y:y+16, "font-family":'IBM Plex Mono', "font-size":'7.5', "font-weight":'600', fill:'#15171A'}, cell);
+      idt.textContent = 'PLT-'+(pid++);
+      const bars = 7;
+      for(let i=0;i<bars;i++){
+        el('rect', {x:x+10+i*3.2, y:y+20, width: (i%3===0?2:1), height:8, fill:'#15171A'}, cell);
+      }
+      const loct = el('text', {x:x+bayW-10, y:y+16, "text-anchor":'end', "font-family":'IBM Plex Mono', "font-size":'7', "font-weight":'700', fill:'#2F8F86'}, cell);
+      loct.textContent = 'C-0'+(b+1)+'-L'+(levels-lvl);
+    }
+  }
+})();
+
+/* ---------- phone: goods receive ---------- */
+const camIcon = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 8h3l1.5-2h7L17 8h3a1 1 0 011 1v9a1 1 0 01-1 1H4a1 1 0 01-1-1V9a1 1 0 011-1z"/><circle cx="12" cy="13" r="3.4"/></svg>`;
+const barcodeIcon = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 5v14M7 5v14M10 5v14M13 5v14M14.5 5v14M18 5v14M21 5v14" stroke-linecap="round"/></svg>`;
+
+function renderReceiveStep1(){
+  document.getElementById('receivePhone').innerHTML = `
+    <div class="phone-topbar"><span>Goods Receive</span><span>GRN-20482</span></div>
+    <div class="phone-body">
+      <div class="viewfinder">${camIcon}<div class="mono" style="font-size:.72rem">Tap to capture product photo</div></div>
+      <button class="phonebtn" onclick="renderReceiveStep2()">Capture photo</button>
+    </div>`;
+}
+function renderReceiveStep2(){
+  document.getElementById('receivePhone').innerHTML = `
+    <div class="phone-topbar"><span>Goods Receive</span><span>GRN-20482</span></div>
+    <div class="phone-body">
+      <div class="thumb"><svg viewBox="0 0 200 130"><rect width="200" height="130" fill="#EDEAE0"/><rect x="60" y="30" width="80" height="70" fill="#D9A76A"/><rect x="70" y="90" width="60" height="10" fill="#B98A55"/></svg></div>
+      <div class="field"><div class="l">Item</div><div class="v">20kg rice sack</div></div>
+      <div class="field"><div class="l">Qty received</div><div class="v">48 units</div></div>
+      <button class="phonebtn" onclick="renderReceiveStep3()">Print label</button>
+    </div>`;
+}
+function renderReceiveStep3(){
+  document.getElementById('receivePhone').innerHTML = `
+    <div class="phone-topbar"><span>Goods Receive</span><span>GRN-20482</span></div>
+    <div class="phone-body">
+      <div class="success">✓ <span>Label printed — pallet ID <b class="mono">PLT-04832</b> assigned. Apply to pallet before moving.</span></div>
+      <div class="barcode-mini">${Array.from({length:22}).map((_,i)=>`<div style="height:${(i%4===0?20:12)}px;width:${(i%5===0?2:1)}px"></div>`).join('')}</div>
+      <button class="phonebtn" disabled>Ready for putaway →</button>
+    </div>`;
+}
+
+/* ---------- phone: putaway ---------- */
+function renderPutawayStep1(){
+  document.getElementById('putawayPhone').innerHTML = `
+    <div class="phone-topbar"><span>Putaway</span><span>Zone C</span></div>
+    <div class="phone-body">
+      <div class="viewfinder">${barcodeIcon}<div class="mono" style="font-size:.72rem">Scan pallet ID</div></div>
+      <button class="phonebtn" onclick="renderPutawayStep2()">Scan PLT-04832</button>
+    </div>`;
+}
+function renderPutawayStep2(){
+  document.getElementById('putawayPhone').innerHTML = `
+    <div class="phone-topbar"><span>Putaway</span><span>Zone C</span></div>
+    <div class="phone-body">
+      <div class="field"><div class="l">Scanned pallet</div><div class="v mono">PLT-04832 · 20kg rice sack</div></div>
+      <div class="locbox">
+        <div class="mono" style="font-size:.7rem;color:#6E7166">SUGGESTED LOCATION</div>
+        <div class="loc">C-03-L4-02</div>
+        <div style="font-size:.76rem;color:#6E7166">Nearest open slot to receiving dock</div>
+      </div>
+      <button class="phonebtn" onclick="renderPutawayStep3()">Confirm putaway</button>
+    </div>`;
+}
+function renderPutawayStep3(){
+  document.getElementById('putawayPhone').innerHTML = `
+    <div class="phone-topbar"><span>Putaway</span><span>Zone C</span></div>
+    <div class="phone-body">
+      <div class="success">✓ <span>Putaway complete. <b class="mono">PLT-04832</b> is now live at <b class="mono">C-03-L4-02</b> — visible to count, pick and stock reports.</span></div>
+      <button class="phonebtn" disabled>Done</button>
+    </div>`;
+}
+
+renderReceiveStep1();
+renderPutawayStep1();
+</script>
+</body>
+</html>
